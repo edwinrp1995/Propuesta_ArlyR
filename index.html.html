@@ -1,0 +1,322 @@
+import weasyprint
+from weasyprint import HTML
+
+html_content = """<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Una Propuesta Especial ❤️</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    }
+
+    body {
+      background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 50%, #feada6 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow-x: hidden;
+      text-align: center;
+      padding: 20px;
+    }
+
+    /* Reproductor flotante de música */
+    .music-player {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(8px);
+      padding: 8px 16px;
+      border-radius: 30px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      z-index: 100;
+      font-size: 0.9rem;
+      color: #333;
+    }
+
+    .music-btn {
+      background: #ff4b2b;
+      border: none;
+      color: white;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 0.9rem;
+      box-shadow: 0 2px 8px rgba(255,75,43,0.3);
+    }
+
+    /* Tarjeta Principal */
+    .card {
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(10px);
+      padding: 2.5rem 2rem;
+      border-radius: 24px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
+      max-width: 480px;
+      width: 100%;
+      position: relative;
+      z-index: 10;
+      transition: all 0.5s ease-in-out;
+    }
+
+    .icon-header {
+      font-size: 3.5rem;
+      margin-bottom: 15px;
+      animation: pulse 1.5s infinite alternate;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      100% { transform: scale(1.1); }
+    }
+
+    h1 {
+      color: #d62828;
+      font-size: 1.8rem;
+      margin-bottom: 1rem;
+      font-weight: 700;
+    }
+
+    p {
+      color: #4a4a4a;
+      font-size: 1.05rem;
+      margin-bottom: 1.8rem;
+      line-height: 1.6;
+    }
+
+    /* Botones */
+    .btn-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 20px;
+      min-height: 60px;
+      position: relative;
+    }
+
+    button {
+      padding: 14px 32px;
+      font-size: 1.1rem;
+      font-weight: bold;
+      border: none;
+      border-radius: 30px;
+      cursor: pointer;
+      transition: transform 0.2s, background-color 0.2s;
+    }
+
+    .btn-yes {
+      background: linear-gradient(45deg, #ff4b2b, #ff416c);
+      color: white;
+      box-shadow: 0 6px 20px rgba(255, 75, 43, 0.4);
+    }
+
+    .btn-yes:hover {
+      transform: scale(1.08);
+      box-shadow: 0 8px 25px rgba(255, 75, 43, 0.6);
+    }
+
+    .btn-no {
+      background-color: #a8a8a8;
+      color: white;
+      position: absolute;
+      transition: all 0.15s ease-out;
+      z-index: 20;
+    }
+
+    /* Mensaje de Promesa / Carta */
+    .promise-box {
+      text-align: left;
+      background: #fff8f8;
+      border-left: 4px solid #ff4b2b;
+      padding: 18px;
+      border-radius: 12px;
+      margin: 20px 0;
+      font-size: 0.98rem;
+      color: #333;
+      line-height: 1.7;
+    }
+
+    .ring-highlight {
+      display: block;
+      text-align: center;
+      font-size: 1.2rem;
+      color: #d62828;
+      font-weight: bold;
+      margin-top: 15px;
+      padding-top: 10px;
+      border-top: 1px linear-gradient(to right, transparent, #ff4b2b, transparent);
+    }
+
+    /* Animación de corazones */
+    .heart {
+      position: fixed;
+      font-size: 20px;
+      top: -20px;
+      user-select: none;
+      pointer-events: none;
+      animation: fall linear forwards;
+      z-index: 1;
+    }
+
+    @keyframes fall {
+      to {
+        transform: translateY(105vh) rotate(360deg);
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Audio de fondo -->
+  <!-- Reemplaza 'musica.mp3' con la ruta de tu canción preferida -->
+  <audio id="bgMusic" loop preload="auto">
+    <source src="musica.mp3" type="audio/mpeg">
+  </audio>
+
+  <!-- Control de audio flotante -->
+  <div class="music-player">
+    <button class="music-btn" id="musicBtn" onclick="toggleMusic()">🎵</button>
+    <span id="musicStatus">Música: Pausada</span>
+  </div>
+
+  <!-- Contenedor Principal -->
+  <div class="card" id="mainCard">
+    <div class="icon-header">🌹</div>
+    <h1>Tengo algo muy especial que decirte...</h1>
+    <p>Desde que llegaste a mi vida, todo ha tomado un sentido diferente. Has llenado mis días de alegría, risas y momentos inolvidables.<br><br><strong>¿Quieres ser mi novia?</strong></p>
+    
+    <div class="btn-container">
+      <button class="btn-yes" onclick="celebrate()">¡Sí, acepto!</button>
+      <button class="btn-no" id="noBtn" onmouseover="moveButton()" onclick="moveButton()">No</button>
+    </div>
+  </div>
+
+  <!-- Script de Formspree para envío silencioso en segundo plano -->
+  <script>
+    const noBtn = document.getElementById('noBtn');
+    const bgMusic = document.getElementById('bgMusic');
+    const musicBtn = document.getElementById('musicBtn');
+    const musicStatus = document.getElementById('musicStatus');
+
+    // Reproducción de música
+    function toggleMusic() {
+      if (bgMusic.paused) {
+        bgMusic.play().then(() => {
+          musicBtn.innerHTML = '⏸️';
+          musicStatus.innerText = 'Sonando ❤️';
+        }).catch(() => {
+          alert('Haz clic en la página para permitir reproducir la música.');
+        });
+      } else {
+        bgMusic.pause();
+        musicBtn.innerHTML = '🎵';
+        musicStatus.innerText = 'Pausada';
+      }
+    }
+
+    // Iniciar música al primer toque/clic en cualquier lugar de la página
+    document.body.addEventListener('click', function startMusicOnFirstClick() {
+      if (bgMusic.paused) {
+        bgMusic.play().then(() => {
+          musicBtn.innerHTML = '⏸️';
+          musicStatus.innerText = 'Sonando ❤️';
+        }).catch(() => {});
+      }
+      document.body.removeEventListener('click', startMusicOnFirstClick);
+    }, { once: true });
+
+    // Mover el botón 'No'
+    function moveButton() {
+      const x = Math.random() * (window.innerWidth - noBtn.offsetWidth - 40) + 20;
+      const y = Math.random() * (window.innerHeight - noBtn.offsetHeight - 40) + 20;
+      
+      noBtn.style.position = 'fixed';
+      noBtn.style.left = `${x}px`;
+      noBtn.style.top = `${y}px`;
+    }
+
+    // Notificación a tu teléfono mediante Formspree
+    function sendNotification() {
+      // REEMPLAZA ESTA URL CON TU ENDPOINT DE FORMSPREE
+      const formspreeEndpoint = 'https://formspree.io/f/maewlajn';
+
+      fetch(formspreeEndpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          respuesta: "¡DIJO QUE SÍ! ❤️💍",
+          mensaje: "Ha aceptado ser tu novia y recibir el anillo de promesa.",
+          fecha: new Date().toLocaleString()
+        })
+      }).catch(err => console.log('Error enviando notificación:', err));
+    }
+
+    // Acción al presionar "Sí"
+    function celebrate() {
+      // 1. Enviar notificación al teléfono
+      sendNotification();
+
+      // 2. Asegurar que la música suena
+      if (bgMusic.paused) {
+        bgMusic.play().catch(() => {});
+      }
+
+      // 3. Cambiar el contenido de la tarjeta por la Promesa y el Anillo
+      const card = document.getElementById('mainCard');
+      card.innerHTML = `
+        <div style="font-size: 3.5rem; margin-bottom: 10px;">💍✨</div>
+        <h1>¡Mi promesa para ti!</h1>
+        
+        <div class="promise-box">
+          <p>Hoy no solo empezamos una historia juntos como novios; hoy quiero entregarte este <strong>anillo de promesa</strong>.</p>
+          <br>
+          <p>Te prometo mi lealtad, mi paciencia y mi apoyo incondicional. Prometo cuidar tus sueños, celebrar tus logros y sostener tu mano en cada momento. Este anillo representa mi compromiso de construir un futuro hermoso a tu lado.</p>
+          <span class="ring-highlight">¡Acepta este anillo como símbolo de mi amor hacia ti! ❤️</span>
+        </div>
+
+        <p style="font-weight: bold; color: #ff4b2b; font-size: 1.1rem; margin-top: 15px;">
+          ¡Gracias por hacerme el hombre más feliz del mundo!
+        </p>
+      `;
+
+      // 4. Iniciar lluvia de corazones
+      setInterval(createHeart, 120);
+    }
+
+    function createHeart() {
+      const heart = document.createElement('div');
+      heart.classList.add('heart');
+      heart.innerHTML = ['❤️', '💖', '💍', '✨', '🌹'][Math.floor(Math.random() * 5)];
+      heart.style.left = Math.random() * 100 + 'vw';
+      heart.style.animationDuration = Math.random() * 2 + 3 + 's';
+      heart.style.fontSize = Math.random() * 15 + 18 + 'px';
+      
+      document.body.appendChild(heart);
+
+      setTimeout(() => {
+        heart.remove();
+      }, 5000);
+    }
+  </script>
+
+</body>
+</html>"""
+
+with open("propuesta_noviazgo_promesa.html", "w", encoding="utf-8") as f:
+    f.write(html_content)
+
+print("HTML guardado con éxito.")
