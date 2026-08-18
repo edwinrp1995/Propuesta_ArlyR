@@ -97,9 +97,10 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      gap: 20px;
-      min-height: 60px;
+      gap: 25px;
+      min-height: 80px;
       position: relative;
+      margin-top: 10px;
     }
 
     button {
@@ -116,6 +117,7 @@
       background: linear-gradient(45deg, #ff4b2b, #ff416c);
       color: white;
       box-shadow: 0 6px 20px rgba(255, 75, 43, 0.4);
+      z-index: 10;
     }
 
     .btn-yes:hover {
@@ -126,7 +128,7 @@
     .btn-no {
       background-color: #a8a8a8;
       color: white;
-      position: absolute;
+      position: relative; /* Inicia normal al lado del Sí */
       transition: all 0.15s ease-out;
       z-index: 20;
     }
@@ -226,18 +228,32 @@
       }
     }, { once: true });
 
-    function moveButton() {
-      const x = Math.random() * (window.innerWidth - noBtn.offsetWidth - 40) + 20;
-      const y = Math.random() * (window.innerHeight - noBtn.offsetHeight - 40) + 20;
-      
+function moveButton() {
+      // Al primer intento de tocar o pasar el cursor, cambia a posición fija
       noBtn.style.position = 'fixed';
-      noBtn.style.left = `${x}px`;
-      noBtn.style.top = `${y}px`;
+
+      // Calcula márgenes seguros dentro de la pantalla
+      const padding = 30;
+      const maxX = window.innerWidth - noBtn.offsetWidth - padding;
+      const maxY = window.innerHeight - noBtn.offsetHeight - padding;
+
+      const randomX = Math.max(padding, Math.floor(Math.random() * maxX));
+      const randomY = Math.max(padding, Math.floor(Math.random() * maxY));
+
+      noBtn.style.left = `${randomX}px`;
+      noBtn.style.top = `${randomY}px`;
     }
+
+    // Agregar eventos táctiles y de mouse para máxima interactividad en celulares
+    noBtn.addEventListener('mouseenter', moveButton);
+    noBtn.addEventListener('touchstart', function(e) {
+      e.preventDefault(); // Evita que se haga clic en celular
+      moveButton();
+    });
 
     function sendNotification() {
       // REEMPLAZA ESTA URL CON TU ENDPOINT DE FORMSPREE
-      const formspreeEndpoint = 'https://formspree.io/f/TU_CODIGO_AQUI';
+      const formspreeEndpoint = 'https://formspree.io/f/maewlajn';
 
       fetch(formspreeEndpoint, {
         method: 'POST',
