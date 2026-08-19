@@ -97,8 +97,8 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      gap: 25px;
-      min-height: 80px;
+      gap: 20px;
+      min-height: 120px;
       position: relative;
       margin-top: 10px;
     }
@@ -128,8 +128,8 @@
     .btn-no {
       background-color: #a8a8a8;
       color: white;
-      position: relative; /* Inicia normal al lado del Sí */
-      transition: all 0.15s ease-out;
+      position: relative;
+      transition: top 0.2s ease, left 0.2s ease;
       z-index: 20;
     }
 
@@ -174,18 +174,15 @@
 </head>
 <body>
 
-  <!-- Audio de fondo -->
   <audio id="bgMusic" loop preload="auto">
     <source src="https://files.catbox.moe/w5y34n.mp3" type="audio/mpeg">
   </audio>
 
-  <!-- Control de audio flotante -->
   <div class="music-player">
     <button class="music-btn" id="musicBtn" onclick="toggleMusic()">🎵</button>
     <span id="musicStatus">Música: Pausada</span>
   </div>
 
-  <!-- Contenedor Principal -->
   <div class="card" id="mainCard">
     <div class="icon-header">🌹</div>
     <h1>Tengo algo muy especial que decirte...</h1>
@@ -193,7 +190,7 @@
     
     <div class="btn-container">
       <button class="btn-yes" onclick="celebrate()">¡Sí, acepto!</button>
-      <button class="btn-no" id="noBtn" onmouseover="moveButton()" onclick="moveButton()">No</button>
+      <button class="btn-no" id="noBtn">No</button>
     </div>
   </div>
 
@@ -218,7 +215,6 @@
       }
     }
 
-    // Iniciar música al primer toque/clic en cualquier lugar de la página
     document.body.addEventListener('click', function startMusicOnFirstClick() {
       if (bgMusic.paused) {
         bgMusic.play().then(() => {
@@ -228,36 +224,35 @@
       }
     }, { once: true });
 
-function moveButton() {
-      // Al primer intento de tocar o pasar el cursor, cambia a posición fija
-      noBtn.style.position = 'fixed';
+    function moveButton() {
+      noBtn.style.position = 'absolute';
+      
+      const container = document.querySelector('.btn-container');
+      const maxX = container.clientWidth - noBtn.offsetWidth;
+      const maxY = container.clientHeight - noBtn.offsetHeight;
 
-      // Calcula márgenes seguros dentro de la pantalla
-      const padding = 30;
-      const maxX = window.innerWidth - noBtn.offsetWidth - padding;
-      const maxY = window.innerHeight - noBtn.offsetHeight - padding;
-
-      const randomX = Math.max(padding, Math.floor(Math.random() * maxX));
-      const randomY = Math.max(padding, Math.floor(Math.random() * maxY));
+      const randomX = Math.floor(Math.random() * maxX);
+      const randomY = Math.floor(Math.random() * maxY);
 
       noBtn.style.left = `${randomX}px`;
       noBtn.style.top = `${randomY}px`;
     }
 
-    // Agregar eventos táctiles y de mouse para máxima interactividad en celulares
     noBtn.addEventListener('mouseenter', moveButton);
     noBtn.addEventListener('touchstart', function(e) {
-      e.preventDefault(); // Evita que se haga clic en celular
+      e.preventDefault();
       moveButton();
     });
 
     function sendNotification() {
-      // REEMPLAZA ESTA URL CON TU ENDPOINT DE FORMSPREE
       const formspreeEndpoint = 'https://formspree.io/f/maewlajn';
 
       fetch(formspreeEndpoint, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
         body: JSON.stringify({
           respuesta: "¡DIJO QUE SÍ! ❤️💍",
           mensaje: "Ha aceptado ser tu novia y recibir el anillo de promesa.",
